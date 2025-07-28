@@ -1,4 +1,4 @@
-### Heat Flux Partitionining model git repository
+## Heat Flux Partitionining model git repository
 This git repository contains the script of the Heat Flux Partitioning modeling developed during L. Favre PhD thesis, co-supervised Catherine Colin (IMFT), Stéphane Mimouni (EDF R&D) and Stéphane Pujet (EDF R&D) :
 - Modeling and simulation of the boiling crisis within PWR at CFD scale [[theses.fr](https://www.theses.fr/2023INPT0018)]
 
@@ -8,6 +8,6 @@ Associated publications :
 
 For any information or question, feel free to reach out at [luc.favre@toulouse-inp.fr](mailto:luc.favre@toulouse-inp.fr) or [favre.luc05@gmail.com](mailto:favre.luc05@gmail.com)
 
-## Additional information
+### Additional information
 - The program requires the python package CoolProp for fluid properties calculation
 
