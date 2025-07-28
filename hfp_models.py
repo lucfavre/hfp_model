@@ -1,17 +1,11 @@
-### HEAT FLUX PARTITIONING PYTHON PROGRAM ###
-# Developed during L. Favre PhD thesis (https://www.theses.fr/2023INPT0018) with EDF R&D and IMFT
-# Associated publication :
-# L. Favre, C. Colin, S. Pujet and S. Mimouni, An updated force balance approach to investigate bubble sliding in vertical flow boiling at low and high pressures,
-# International Journal of Heat and Mass Transfer, Volume 211, 1 September 2023, 124227
-# For any question, feel free to ask me at favre.luc05@gmail.com
-
+### Load packaged
 import numpy as np
 import CoolProp.CoolProp as CP
 
-### MATHEMATICAL FUNCTIONS
+### Mathematical functions
 
-## Dichotomy algorithm to find a root of a given function F located between a and b
-def root_dichotomy(F,a,b,epsilon=1e-5,nit_max=1000):
+# Dichotomy algorithm to find a root of a given function F located between a and b
+def root_dichotomy(F, a, b, epsilon=1e-5, nit_max=1000):
 
     k=0
     while abs(b-a)>epsilon and k<nit_max:
@@ -24,14 +18,14 @@ def root_dichotomy(F,a,b,epsilon=1e-5,nit_max=1000):
         else:
             print(f"WARNING : no zero detected between {a} and {b}")
             converge=False
-            return (m, F(m),k, converge)
+            return (m, F(m), k, converge)
 
     m=(a+b)/2
     converge=True
     return (m, F(m), k, converge)
 
 
-## Approximation of Lambert's W-funciont (reciprocal of x->x*exp(x))
+# Approximation of Lambert's W-function (reciprocal of x->x*exp(x))
 def approx_lamb(x):
     e=2.71828
 
@@ -46,11 +40,10 @@ def approx_lamb(x):
         b=1-a*e
         return a*x+b
 
-## Lambert's W-function
+# Lambert's W-function
 def lamb(x):
 
     if x<1e-4: # W(x) approx. equal to x if x<1e-4
-
         return x
 
     else:
@@ -58,19 +51,18 @@ def lamb(x):
         def reclamb(z):
             return z*np.exp(z) - x
 
-        res=root_dichotomy(reclamb, 0, 1e3)[0] #We find the root by dichotomy for(0<x<1000) if x>1e-4
+        res=root_dichotomy(reclamb, 0, 1e3)[0] # We find the root by dichotomy for (0<x<1000) if x>1e-4
 
     return res
 
 
 
-### PHYSICAL PROPERTIES FUNCTIONS
+### Physical properties of fluids
 
-## Functions returning the physcial properties of a given fluid at pressure P_Pa, at saturation temperature is no subcooling is specified
-## MODIFIED FOR SPECIFIC KOSSOLAPOV CASE WITH WATER AT P=10.5 bar DTL=10K
+# Function returning the physcial properties of a given fluid at pressure P_Pa, at saturation temperature if no subcooling is specified
 def fluid_ppt(fluid, P_Pa, subcool=0):
 
-    if fluid == 'FC87': #PROPERTIES GIVEN IN THORNCROFT(IJHMT, 1998) AT 1ATM
+    if fluid == 'FC87': # Properties given in Thorncroft at al. (IJHMT, 1998) at 1atm
 
         # Saturation temperature
         Tsat = 29.3
@@ -95,12 +87,11 @@ def fluid_ppt(fluid, P_Pa, subcool=0):
         cpV_sat = 0 # Not available
 
         # Thermal conductivities
-        PrL_sat = 9.03 #Liquid Prandtl number
+        PrL_sat = 9.03 # Liquid Prandtl number
         lamL_sat = muL_sat * cpL_sat / PrL_sat
         lamV_sat = 0 # Not available
 
         return {'Tsat':Tsat, 'rhoL':rhoL_sat, 'rhoV':rhoV_sat, 'muL':muL_sat, 'muV':muV_sat, 'cpL':cpL_sat, 'cpV':cpV_sat, 'lamL':lamL_sat, 'lamV':lamV_sat, 'hLV':hLV, 'sigma':sigma}
-
 
     else:
 
@@ -130,7 +121,7 @@ def fluid_ppt(fluid, P_Pa, subcool=0):
         # Surface tension in J/m2
         sigma = CP.PropsSI('SURFACE_TENSION', 'P', P_Pa, 'Q', 0, fluid)
 
-        if subcool > 0: #If a positive subcooling is specified, program will return liquid properties at TLiq = Tsat - subcool
+        if subcool > 0: # If a positive subcooling is specified, program will return liquid properties at TLiq = Tsat - subcool
             DTL = subcool
             sat = False
 
@@ -151,11 +142,11 @@ def fluid_ppt(fluid, P_Pa, subcool=0):
             return {'Tsat':Tsat, 'rhoL':rhoL_sat, 'rhoV':rhoV_sat, 'muL':muL_sat, 'muV':muV_sat, 'cpL':cpL_sat, 'cpV':cpV_sat, 'lamL':lamL_sat, 'lamV':lamV_sat, 'hLV':hLV, 'sigma':sigma}
 
 
-### KURUL & PODOWSKI MODEL
+## Kurul & Podowski traditional model (International Heat Transfer Conference Digital Library, 1990)
 
 def kp_hfp(DTw, DTL, P_bar, GL, Dh, theta, fluid, dtheta=1, Kg=1.0, Rc=0, hfc_corr=1, all_dat=False):
 
-    ### INITIALIZATION
+    ## Initialization
 
     # Physical parameters
     P_Pa = P_bar * 1e5 #Pressure in Pa for CoolProp physical properties
