@@ -8,6 +8,6 @@ Associated publications :
 
 For any information or question, feel free to reach out at [luc.favre@toulouse-inp.fr](mailto:luc.favre@toulouse-inp.fr) or [favre.luc05@gmail.com](mailto:favre.luc05@gmail.com)
 
-### Additional information
+## Additional information
 - The program requires the python package CoolProp for fluid properties calculation
 
